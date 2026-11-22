@@ -72,3 +72,25 @@ R_LIBS="$audit_lib" Rscript --vanilla -e 'library(longWR); example(longwr_estima
 The November 22 review reached the metadata gate in `R CMD check`. The separate
 archive installation, help example, and 298 test expectations passed. See
 [AI_USAGE.md](AI_USAGE.md) for the environment warning and remaining metadata.
+
+### Check approved package metadata
+
+Use the maintainer-approved identity in `Authors@R` with roles `aut` and
+`cre`. Set `URL` and `BugReports` to the repository and its issues page.
+Keep the repository's GPL-3 text in LICENSE and use `License: GPL-3` in
+DESCRIPTION. Regenerate help before building so the package overview picks
+up the maintainer and links.
+
+```sh
+export R_LIBS_USER="$PWD/.r-library"
+Rscript --vanilla -e 'roxygen2::roxygenise()'
+R CMD build .
+check_dir=$(mktemp -d)
+R CMD check --as-cran --output="$check_dir" longWR_0.1.0.9000.tar.gz
+```
+
+On this Mac the HTML check used HTML Tidy 5.8.0 on PATH and V8 in the local
+validation library. Read `00check.log` in the resulting check directory and
+the expectation count in `tests/testthat.Rout`. The approved-metadata run
+resolved the earlier missing-field error. Its two remaining notes are
+documented in [AI_USAGE.md](AI_USAGE.md).

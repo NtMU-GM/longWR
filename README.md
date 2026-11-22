@@ -26,5 +26,5 @@ R_LIBS_USER="$PWD/.r-library" Rscript --vanilla -e 'if (!requireNamespace("testt
 R_LIBS_USER="$PWD/.r-library" Rscript --vanilla -e 'testthat::test_package("longWR", stop_on_failure = TRUE)'
 ```
 
-The development version is `0.1.0.9000`. Release metadata awaits approved
-author attribution, a maintainer email, and a license decision.
+Mingyuan Kang maintains longWR. The development version is `0.1.0.9000`.
+The project uses the [GNU General Public License, version 3](LICENSE).

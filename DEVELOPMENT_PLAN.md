@@ -30,9 +30,12 @@ review on November 22. The Section 8 example gave WR 4 and WINS agreed on
 two datasets with weighted and crude analyses. The review corrected ambiguous
 ID matching, status precedence, and probability rounding. Verification of the
 source archive recorded 298 passing expectations and no failures or skips.
-The ordinary package check stops at missing author and maintainer metadata.
-Approved attribution, contact details, and a license decision remain release
-work. Reproduction commands are in [AGENTIC_TUTORIAL.md](AGENTIC_TUTORIAL.md).
+The maintainer approved the author, contact details, GPL-3 license and public
+repository URLs. The subsequent macOS arm64 `R CMD check --as-cran` completed
+with zero errors, zero warnings, and two notes covering CRAN incoming
+(new submission and development version) and external clock verification.
+Both manuals and all 298 test expectations passed. Repeat the check on the
+release version and complete the planned cross-platform checks before release. Reproduction commands are in [AGENTIC_TUTORIAL.md](AGENTIC_TUTORIAL.md).
 
 Phase 2 is pending. Its first integration check should pass the sequential
 weight object's full-cohort IDs and cumulative weights into the Phase 1

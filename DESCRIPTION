@@ -2,10 +2,14 @@ Package: longWR
 Type: Package
 Title: Win Ratios Under Longitudinal Static Treatment Regimes
 Version: 0.1.0.9000
+Authors@R: person("Mingyuan", "Kang", email = "mk2628369@outlook.com",
+    role = c("aut", "cre"))
 Description: Direct weighted pairwise comparisons of prioritized outcomes
     between two sustained treatment histories in fully observed data with
     two binary treatment decisions.
-License: TBD
+License: GPL-3
+URL: https://github.com/NtMU-GM/longWR
+BugReports: https://github.com/NtMU-GM/longWR/issues
 Encoding: UTF-8
 Suggests:
     testthat (>= 3.0.0),

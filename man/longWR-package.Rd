@@ -9,4 +9,16 @@
 Direct comparison of prioritized outcomes for two sustained treatment
 histories using unit or supplied subject weights.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/NtMU-GM/longWR}
+  \item Report bugs at \url{https://github.com/NtMU-GM/longWR/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Mingyuan Kang \email{mk2628369@outlook.com}
+
+}
 \keyword{internal}

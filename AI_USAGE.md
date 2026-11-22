@@ -134,3 +134,26 @@ defects, and commit Phase 1 locally. Student review of the changes is pending.
 - The project-library reinstall encountered a leftover installation lock with
   empty staging directories. Moved the lock aside and installed the verified
   tarball locally. The project-library test run also passed all 298 expectations.
+
+### Approved metadata and CRAN-style check · November 22, 2026
+
+The maintainer approved the author name, email, GPL-3 license and existing
+public repository. Codex (GPT-6.2-astra) updated DESCRIPTION, regenerated the
+package overview, and verified the installed Author, Maintainer, License, URL
+and BugReports fields. The checkout's LICENSE matches the public repository's
+Git blob `f288702d2fa16d3cdf0035b15a9fcbc552cd88e7`. R distributes the GPL-3
+text, so the package archive declares the standard license in DESCRIPTION.
+
+The first online `R CMD check --as-cran` completed with four notes. The macOS
+system Tidy from 2006 rejected HTML5 markup and the check directory contained
+a residual installation lock. Installed HTML Tidy 5.8.0 via Homebrew and V8
+8.0.1 in the local R library for documentation checks, then checked the same
+tarball in a fresh directory. The PDF and HTML manuals, examples, installation
+and 298 test expectations passed, including WINS checks.
+
+The final macOS arm64 check under R 4.4.1 reported 0 errors, 0 warnings and
+2 notes. CRAN incoming reported a new submission and the large component in
+the planned development version 0.1.0.9000. Keep the planned 0.1.0 version for
+release. R could not verify current time against its external service. A
+separate inspection of all 18 archive entries found zero future timestamps
+relative to the local clock. The timestamp check was enabled on both runs.
