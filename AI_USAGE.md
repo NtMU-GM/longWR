@@ -157,3 +157,49 @@ the planned development version 0.1.0.9000. Keep the planned 0.1.0 version for
 release. R could not verify current time against its external service. A
 separate inspection of all 18 archive entries found zero future timestamps
 relative to the local clock. The timestamp check was enabled on both runs.
+
+### Phase 0 and Phase 1 efficiency and documentation audit · November 22, 2026
+
+The user asked Codex (GPT-6.2-astra) to audit the scaffold and all existing
+Phase 1 code under the updated AGENTS.md, retain the direct algorithm and
+public interface, profile before refactoring, and include the project
+instructions in the local commit. The agent read AGENTS.md and SPEC.md in
+full, inspected the namespace, package documentation, internal helpers,
+estimator, tests, and installation/check setup. Independent human review of
+the audit is pending.
+
+- Phase 0 has package metadata, help, and a test harness. The only runtime
+  analysis entry point is the Phase 1 estimator. Full-cohort ID validation
+  and weight alignment precede regime selection. Schema validation's repeated
+  column-name scans and data-frame growth had small absolute timings on the
+  measured examples. The audit retained those validation paths.
+- Before editing, a 1 ms Rprof sample of ten calls on a 4,000-row cohort
+  attributed about 47% of samples to log-mass summation (inclusive). The
+  original implementation allocated 82.1 MiB cumulatively per call. Keep
+  log-sum-exp to preserve tiny positive masses and structural zeros.
+  Move repeated binary-event comparisons outside the per-subject loop.
+  Directly sum the weights selected by each logical category and keep the
+  original summation order. Document the pair-loop time and workspace bounds
+  in the exported help and link to the worked example from package help.
+- Timed seven warmed calls per version at each of three sizes and measured
+  allocations separately. At four million pairs the median went from 109
+  to 77 ms and allocations from 324.5 to 232.5 MiB. The tutorial includes
+  all three results, the fixture, and reproduction commands.
+- Compared complete results to commit dc62307 with R's identical() on all
+  three benchmark fixtures and 512 small fixed-seed datasets. These used
+  crude, zero, integer, and extreme finite weights and exercised all seven
+  result statuses. Every comparison passed.
+- Ran the source suite after the loop change and again after regenerating
+  the help. Built the tarball and ran an online R CMD check --as-cran under
+  macOS arm64 with R 4.4.1. All 298 expectations passed, including the WINS
+  comparisons, with zero failures, test warnings, or skips. The source test
+  runner separately reported that testthat was built under R 4.4.3. Examples
+  and both manuals passed. Check status was 0 errors, 0 warnings and 2 notes
+  for CRAN incoming (new submission and development version) and inability
+  to verify the external clock.
+- Moved the estimator link into the package overview text so roxygen also
+  retains the existing repository links. Rebuilt and rechecked the final
+  archive. A stale local installation lock contained empty staging directories.
+  Moved it aside, installed the archive in the project library, and confirmed
+  all 298 installed expectations passed. Executed the tutorial benchmark
+  block separately and reproduced the allocation totals and exact comparisons.

@@ -21,8 +21,9 @@ logical values. Independence and measurement timing are caller assumptions.}
 
 \item{weights}{NULL for a crude adherer comparison, or finite nonnegative
 numeric weights in exact input row order, including switchers. If named,
-names must uniquely and losslessly label row IDs in order. A list of class \code{longwr_weights}
-with unique \code{id} and numeric cumulative \code{w} vectors is matched
+names must uniquely and losslessly label row IDs in order. A list of
+class \code{longwr_weights} with unique \code{id} and numeric
+cumulative \code{w} vectors is matched
 by ID. Mixed numeric and character IDs require lossless text labels.
 The caller supplies weights appropriate to the target population.}
 
@@ -60,8 +61,6 @@ A list with \code{wr} (11 wins divided by 11 losses),
 Compares every observed 11 subject with every observed 00 subject. Lower
 adverse-event status wins first. For equal status, higher score wins, with
 an exact tie for equal scores. Weights are normalized within each regime.
-The calculation uses log masses and compares one 11 subject at a time,
-taking time proportional to the number of pairs and memory linear in rows.
 }
 \details{
 Each 11 subject with weight \eqn{w_i} is compared with each 00
@@ -70,6 +69,12 @@ subject with weight \eqn{w_j}. Their pair contributes
 its regime. Summing these contributions separately for wins, losses and
 ties gives their probabilities. WR is the win mass divided by the loss mass.
 Multiplying all weights in either regime by a positive constant cancels.
+
+The direct comparison takes \eqn{O(n_{11} n_{00})} time. It stores
+three log masses per 11 subject and comparison vectors over the 00
+subjects, using \eqn{O(n_{11} + n_{00})} working storage. Full-cohort validation and
+weight alignment also use time and space linear in the cohort size for a
+fixed set of columns.
 
 With appropriate sequential inverse probability weights, this estimates a
 marginal comparison of independent draws under sustained 11 and 00 in the

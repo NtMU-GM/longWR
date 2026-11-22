@@ -21,3 +21,28 @@
 - Update both documents after each development phase.
 - Do not include private conversations or unnecessary chat transcripts.
 - Never fabricate AI usage records, human contributions or test results.
+
+## Computational Efficiency
+
+- Write efficient, readable, and memory-conscious R code.
+- Analyze time and space complexity for core algorithms.
+- Avoid unnecessary loops, repeated computations, and memory allocations.
+- Avoid constructing full pairwise matrices for large datasets.
+- Use vectorization when it improves performance without
+  compromising numerical stability.
+- Profile and benchmark computational bottlenecks before optimization.
+- Verify optimized algorithms against the direct reference implementation.
+- Document computational complexity and measured performance.
+- Prioritize statistical correctness over premature optimization.
+
+## Code Documentation and Comments
+
+- Use clear, professional English comments.
+- Document all exported functions using roxygen2, including
+  parameters, return values, examples, and statistical assumptions.
+- Explain nontrivial statistical formulas, algorithmic decisions,
+  numerical stability, and edge-case handling.
+- Document internal helper functions where appropriate.
+- Explain why a code block is necessary, not merely what it does.
+- Avoid redundant comments that restate obvious code.
+- Keep documentation consistent with SPEC.md.

@@ -94,3 +94,67 @@ validation library. Read `00check.log` in the resulting check directory and
 the expectation count in `tests/testthat.Rout`. The approved-metadata run
 resolved the earlier missing-field error. Its two remaining notes are
 documented in [AI_USAGE.md](AI_USAGE.md).
+
+### Profile the direct estimator before changing its loop
+
+Use the pre-audit commit `dc62307` as the reference. Compare whole result
+lists, including counts, statuses, and reasons. Create the same data and
+weights for both implementations and keep data generation outside the timed
+calls. The following R commands reproduce the audit from the repository root.
+
+```r
+source("R/schema.R")
+source("R/longwr_estimate.R")
+ref <- new.env()
+old_source <- system2("git", c("show", "dc62307:R/longwr_estimate.R"), stdout = TRUE)
+eval(parse(text = old_source), envir = ref)
+
+measure <- function(f, d, w) {
+  invisible(f(d, w))
+  elapsed <- replicate(7, system.time(f(d, w))[["elapsed"]])
+  path <- tempfile()
+  Rprofmem(path)
+  f(d, w)
+  Rprofmem(NULL)
+  entries <- grep("^[0-9]+ ", readLines(path), value = TRUE)
+  bytes <- as.numeric(sub(" .*", "", entries))
+  c(median_seconds = median(elapsed), cumulative_MiB = sum(bytes) / 2^20)
+}
+
+for (n in c(1000, 4000, 8000)) {
+  set.seed(615)
+  d <- data.frame(id = seq_len(n), A0 = rep(c(0, 0, 1, 1), n / 4),
+                  A1 = rep(0:1, n / 2), L0 = rnorm(n), L1 = rnorm(n),
+                  B = rbinom(n, 1, .3), Y = sample(-8:8, n, TRUE))
+  w <- exp(rnorm(n))
+  stopifnot(identical(ref$longwr_estimate(d, w), longwr_estimate(d, w)))
+  print(rbind(before = measure(ref$longwr_estimate, d, w),
+              after = measure(longwr_estimate, d, w)))
+}
+```
+
+Each fixture assigns one quarter of the cohort to each observed history.
+Measurements include schema validation, numeric weight alignment, and the
+direct estimator. Rprofmem records cumulative allocations during a separate
+warmed call. Peak live memory is a different quantity.
+
+| Cohort size | 11 × 00 pairs | Median elapsed, before → after | Cumulative R allocations, before → after |
+| ---: | ---: | ---: | ---: |
+| 1,000 | 62,500 | 3 → 2 ms | 5.4 → 3.9 MiB |
+| 4,000 | 1,000,000 | 27 → 18 ms | 82.1 → 59.0 MiB |
+| 8,000 | 4,000,000 | 109 → 77 ms | 324.5 → 232.5 MiB |
+
+These timings describe R 4.4.1 on this arm64 Mac. For a fixed schema,
+validation and ID alignment scan the full cohort in linear time. Adding
+mapped covariates adds finite-value scans for each column. The current schema
+helper also searches input column names for each mapping and grows a
+data frame one column at a time. At 1,000 rows, schema validation alone took
+about 0.1 ms with one baseline covariate and 1.5 ms with 100.
+
+The pair loop still visits every 11/00 pair. It computes the binary comparison
+masks once for each possible treated event value. Each treated subject's
+score determines the remaining comparisons. Direct summation of the three
+categories retains small masses, and writing contributions at their original
+row indices preserves their order for the final sums. The live pair workspace
+grows with the two regime sizes. Cumulative allocations grow with the number
+of pairs as R creates and releases per-subject vectors.

@@ -54,8 +54,6 @@ normalized_log_weights <- function(w) {
 #' Compares every observed 11 subject with every observed 00 subject. Lower
 #' adverse-event status wins first. For equal status, higher score wins, with
 #' an exact tie for equal scores. Weights are normalized within each regime.
-#' The calculation uses log masses and compares one 11 subject at a time,
-#' taking time proportional to the number of pairs and memory linear in rows.
 #'
 #' @details Each 11 subject with weight \eqn{w_i} is compared with each 00
 #' subject with weight \eqn{w_j}. Their pair contributes
@@ -63,6 +61,12 @@ normalized_log_weights <- function(w) {
 #' its regime. Summing these contributions separately for wins, losses and
 #' ties gives their probabilities. WR is the win mass divided by the loss mass.
 #' Multiplying all weights in either regime by a positive constant cancels.
+#'
+#' The direct comparison takes \eqn{O(n_{11} n_{00})} time. It stores
+#' three log masses per 11 subject and comparison vectors over the 00
+#' subjects, using \eqn{O(n_{11} + n_{00})} working storage. Full-cohort validation and
+#' weight alignment also use time and space linear in the cohort size for a
+#' fixed set of columns.
 #'
 #' With appropriate sequential inverse probability weights, this estimates a
 #' marginal comparison of independent draws under sustained 11 and 00 in the
@@ -76,8 +80,9 @@ normalized_log_weights <- function(w) {
 #'   logical values. Independence and measurement timing are caller assumptions.
 #' @param weights NULL for a crude adherer comparison, or finite nonnegative
 #'   numeric weights in exact input row order, including switchers. If named,
-#'   names must uniquely and losslessly label row IDs in order. A list of class \code{longwr_weights}
-#'   with unique \code{id} and numeric cumulative \code{w} vectors is matched
+#'   names must uniquely and losslessly label row IDs in order. A list of
+#'   class \code{longwr_weights} with unique \code{id} and numeric
+#'   cumulative \code{w} vectors is matched
 #'   by ID. Mixed numeric and character IDs require lossless text labels.
 #'   The caller supplies weights appropriate to the target population.
 #' @param id Name of the unique numeric, character, or factor subject ID.
@@ -143,18 +148,25 @@ longwr_estimate <- function(data, weights = NULL, id = "id", treatment = c("A0",
 
   trt_w <- normalized_log_weights(w[treated])
   con_w <- normalized_log_weights(w[control])
+  trt_b <- d$B[treated]
+  trt_y <- d$Y[treated]
   con_b <- d$B[control]
   con_y <- d$Y[control]
-  # Each row contains one subject's contribution to the three categories.
-  # Summing ties and losses directly preserves rare mass near a probability of one.
   row_mass <- matrix(-Inf, nrow = length(treated), ncol = 3)
-  for (i in seq_along(treated)) {
-    b <- d$B[treated[i]]
-    y <- d$Y[treated[i]]
-    wins <- b < con_b | (b == con_b & y > con_y)
-    losses <- b > con_b | (b == con_b & y < con_y)
-    row_mass[i, ] <- trt_w[i] + c(log_mass(con_w[wins]), log_mass(con_w[losses]),
-                                  log_mass(con_w[!wins & !losses]))
+  # All treated subjects with the same event status share these comparisons.
+  # Write each contribution at its original row to preserve summation order.
+  for (b in 0:1) {
+    event_win <- b < con_b
+    same_event <- b == con_b
+    for (i in which(trt_b == b)) {
+      wins <- event_win | (same_event & trt_y[i] > con_y)
+      ties <- same_event & trt_y[i] == con_y
+      losses <- !(wins | ties)
+      # Sum the loss weights directly. Subtracting win and tie masses from
+      # one could erase a small positive loss probability through roundoff.
+      row_mass[i, ] <- trt_w[i] + c(log_mass(con_w[wins]), log_mass(con_w[losses]),
+                                    log_mass(con_w[ties]))
+    }
   }
   masses <- apply(row_mass, 2L, log_mass)
   # The categories partition all pairs. Renormalizing their combined mass
@@ -167,6 +179,8 @@ longwr_estimate <- function(data, weights = NULL, id = "id", treatment = c("A0",
     result$status <- "all_ties"
     result$reason <- "Every positive-weight pair tied."
   } else {
+    # The log ratio can be finite even when both displayed probabilities
+    # underflow. Only a log mass of -Inf denotes an empty positive-weight category.
     result$wr <- exp(masses[1] - masses[2])
     if (masses[1] == -Inf) {
       result$status <- "zero_win"
