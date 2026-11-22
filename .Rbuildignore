@@ -1,0 +1,8 @@
+^\.gitignore$
+^\.github$
+^\.r-library$
+^AGENTS\.md$
+^AI_USAGE\.md$
+^DEVELOPMENT_PLAN\.md$
+^SPEC\.md$
+^vignettes/\.gitkeep$

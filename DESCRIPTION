@@ -1,0 +1,12 @@
+Package: longWR
+Type: Package
+Title: Win Ratios Under Longitudinal Static Treatment Regimes
+Version: 0.1.0.9000
+Description: Development scaffold for a package to estimate marginal win ratios
+    comparing two sustained treatment strategies in fully observed data with
+    two binary treatment decisions.
+License: TBD
+Encoding: UTF-8
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
