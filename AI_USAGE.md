@@ -69,3 +69,68 @@ Student review has not yet been recorded. The next review should confirm that
 the milestone gates match the specification and that the local test commands
 are reproducible. The user will need to supply approved author and maintainer
 details before release.
+
+## 2026-11-22 · Phase 1
+
+- Codex (GPT-6.2-astra) worked from the user's request to checkpoint the
+  scaffold, implement shared schema validation and the direct weighted
+  estimator, test the Section 8 example, generate help, and stop after Phase 1.
+- Read AGENTS.md, SPEC.md, and DEVELOPMENT_PLAN.md. Verified the Git exclusions
+  for the local library, package tarball, check directory, and R history.
+  Committed the scaffold locally as `16e29be` before implementing the module.
+- Validated all mapped rows before selecting regimes. Chose positional numeric
+  weights with optional ID names and ID matching for a weight object containing
+  `id` and `w`. Zero-weight subjects still contribute to observed counts.
+  Implemented separate log-scale mass sums for wins, losses, and ties to retain
+  small categories and distinguish structural zeros from floating-point limits.
+- Ran the schema tests first, reran the source suite during implementation,
+  regenerated the function help and namespace with roxygen2, and installed
+  with tests. Roxygen initially skipped the hand-authored package overview.
+  Converted it to generated documentation and reran roxygen2 successfully.
+- The installed help example returned 4. WINS 1.5.1 reproduced the weighted
+  WR of 4, crude WR of 2, and directional probabilities on the Section 8 data.
+  The final installed suite reported 153 passing expectations, 0 failures,
+  0 test warnings, and 0 skips. R separately reported that testthat was built
+  under R 4.4.3 on this R 4.4.1 installation.
+- The tutorial records reproducible commands and review exercises. Independent
+  student review of this implementation is pending.
+
+### Phase 1 review before Phase 2
+
+The user asked Codex (GPT-6.2-astra) to audit the existing estimator, add
+independent and boundary tests, improve comments and help, correct verified
+defects, and commit Phase 1 locally. Student review of the changes is pending.
+
+- Re-read all three governing documents. Traced 11/00 selection, binary-first
+  comparison, per-regime normalization, category probabilities, and WR against
+  sections 2.4 and 8. The original 153 expectations passed before edits.
+- Reproduced duplicate weight fields silently selecting the first vector and
+  distinct numeric IDs printing as the same weight name. Reject ambiguous
+  names and lossy mixed ID conversions while retaining exact numeric keys.
+  Also reject a matrix of factor IDs before converting factor levels to text.
+- Reproduced an invalid weight masked by an absent regime and a positive
+  probability underflow masking a structural zero. Validate all supplied
+  weight values first and preserve a one-sided status with the underflow in
+  its reason. Renormalize the three log masses as a partition to correct an
+  observed all-tie probability of 1.0000000000000002. The first round of
+  regression tests recorded nine failed expectations before these fixes.
+- Verified crude WR 2 and weighted WR 4 for the manual fixture. WINS 1.5.1
+  agreed for both methods on two fixtures, including interleaved arms of
+  unequal size. WINS checks use digit 12 and tolerance 1e-10. A separate
+  expanded-frequency comparison checked all 81 assignments of three outcome
+  levels to four subjects. Tested a pair count above 32-bit integer range
+  using a zero-weight regime to avoid enumerating billions of pairs.
+- Generated roxygen help, ran the source suite, built the tarball and installed
+  it into a temporary library. A path assertion initially compared the macOS
+  temporary-directory alias with its resolved path. The rerun compared both
+  resolved paths and verified the installed copy. Rd checks, documentation
+  consistency and code-usage checks reported no issues. The installed example
+  returned 4. The installed suite reported 298 passes, 0 failures, 0 test
+  warnings, and 0 skips. R 4.4.1 separately warned that testthat was built
+  under 4.4.3.
+- Both the preliminary check with `--no-manual` and the final standard
+  `R CMD check` stopped with one missing-metadata error for Author and
+  Maintainer. License remains TBD. Verification was local on macOS arm64.
+- The project-library reinstall encountered a leftover installation lock with
+  empty staging directories. Moved the lock aside and installed the verified
+  tarball locally. The project-library test run also passed all 298 expectations.

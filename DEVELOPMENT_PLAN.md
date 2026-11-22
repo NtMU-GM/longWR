@@ -22,3 +22,18 @@ After the direct estimator passes its validation gates, consider exact sorted
 counting and benchmark equivalence and runtime before enabling it. Treat
 bootstrap inference as optional and contingent on coverage validation. Follow
 the scope and deferral conditions in the specification.
+
+## Milestone status · November 22, 2026
+
+Phase 0 is complete at local commit `16e29be`. Phase 1 passed its estimator
+review on November 22. The Section 8 example gave WR 4 and WINS agreed on
+two datasets with weighted and crude analyses. The review corrected ambiguous
+ID matching, status precedence, and probability rounding. Verification of the
+source archive recorded 298 passing expectations and no failures or skips.
+The ordinary package check stops at missing author and maintainer metadata.
+Approved attribution, contact details, and a license decision remain release
+work. Reproduction commands are in [AGENTIC_TUTORIAL.md](AGENTIC_TUTORIAL.md).
+
+Phase 2 is pending. Its first integration check should pass the sequential
+weight object's full-cohort IDs and cumulative weights into the Phase 1
+estimator and verify row-permutation invariance.

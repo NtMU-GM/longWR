@@ -1,6 +1,6 @@
 #' longWR: Win Ratios Under Longitudinal Static Treatment Regimes
 #'
-#' Development scaffold for a package targeting the marginal prioritized-outcome
-#' win ratio for two sustained treatment strategies.
+#' Direct comparison of prioritized outcomes for two sustained treatment
+#' histories using unit or supplied subject weights.
 #' @keywords internal
 "_PACKAGE"

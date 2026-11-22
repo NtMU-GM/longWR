@@ -2,7 +2,9 @@
 
 longWR is an R package in development for estimating the marginal win ratio
 comparing always-treated (11) and never-treated (00) regimes with two binary
-treatment decisions. Phase 0 provides an installable scaffold. See
+treatment decisions. Phase 1 provides the direct point estimator for unit or supplied subject weights.
+After installation, run `example(longwr_estimate, package = "longWR")` for a
+worked comparison with custom column names. See
 [SPEC.md](SPEC.md) for the scientific design and
 [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) for milestone gates.
 
