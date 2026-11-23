@@ -203,3 +203,20 @@ the audit is pending.
   Moved it aside, installed the archive in the project library, and confirmed
   all 298 installed expectations passed. Executed the tutorial benchmark
   block separately and reproduced the allocation totals and exact comparisons.
+
+### GitHub checkpoint publication · November 23, 2026
+
+The maintainer authorized publication of completed Phases 0 and 1 to the
+existing public repository. Codex (GPT-6.2-sol) fetched its two commits,
+audited both histories, and reconciled the independently initialized branches
+with a merge. The GPL-3 license matched in both trees. The merge retained both
+sets of ignore rules and clarified the current estimator and installation
+instructions in README.md.
+
+The pre-publication audit reviewed six commits and 48 distinct tracked blobs.
+The scan found no credential patterns, absolute personal filesystem paths,
+tracked local libraries, or generated build and check artifacts. Local commit
+metadata uses the approved public maintainer address. The pre-existing remote
+history already contains an institutional author address. The source suite
+passed 298 expectations with zero failures, test warnings, or skips. R
+separately reported the testthat build-version warning documented above.

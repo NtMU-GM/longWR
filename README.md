@@ -2,11 +2,27 @@
 
 longWR is an R package in development for estimating the marginal win ratio
 comparing always-treated (11) and never-treated (00) regimes with two binary
-treatment decisions. Phase 1 provides the direct point estimator for unit or supplied subject weights.
-After installation, run `example(longwr_estimate, package = "longWR")` for a
-worked comparison with custom column names. See
-[SPEC.md](SPEC.md) for the scientific design and
-[DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) for milestone gates.
+treatment decisions.
+
+**Current status.** Phase 0 and Phase 1 are complete. The available estimator,
+`longwr_estimate()`, compares outcomes in the observed 11 and 00 groups using
+unit or caller-supplied subject weights. It prioritizes a lower binary adverse
+event and uses a higher numeric score to break ties. Sequential weight fitting
+and simulation are planned for Phase 2. The development plan covers the
+remaining validation and release milestones. See [SPEC.md](SPEC.md) and
+[DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md).
+
+## Install and run the example
+
+```r
+# Install remotes first if needed with install.packages("remotes")
+remotes::install_github("NtMU-GM/longWR")
+library(longWR)
+example(longwr_estimate)
+```
+
+The example uses custom column names and supplied weights. The expected win
+ratio is 4.
 
 ## Local smoke test
 
